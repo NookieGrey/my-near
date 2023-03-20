@@ -3,7 +3,7 @@ var __commonJS = (cb2, mod) => function __require() {
   return mod || (0, cb2[__getOwnPropNames(cb2)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var require_index_001 = __commonJS({
-  "assets/index-d5428d86.js"(exports, module) {
+  "assets/index-a89787d5.js"(exports, module) {
     function _mergeNamespaces(n2, m2) {
       for (var i2 = 0; i2 < m2.length; i2++) {
         const e2 = m2[i2];
@@ -22829,7 +22829,8 @@ ${JSON.stringify(result, null, 2)}`, result.error.name);
       }, []);
       const signIn = reactExports.useCallback(async () => {
         await (walletConnection == null ? void 0 : walletConnection.requestSignIn({
-          contractId: CONTRACT_ADDRESS
+          contractId: CONTRACT_ADDRESS,
+          successUrl: location.href + "#hack"
         }));
       }, [walletConnection]);
       const signOut = reactExports.useCallback(() => {
@@ -41323,7 +41324,7 @@ ${JSON.stringify(result, null, 2)}`, result.error.name);
     }
     emptyFunctionWithReset.resetWarningCache = emptyFunction;
     var factoryWithThrowingShims = function() {
-      function shim(props, propName, componentName, location, propFullName, secret) {
+      function shim(props, propName, componentName, location2, propFullName, secret) {
         if (secret === ReactPropTypesSecret) {
           return;
         }
@@ -47626,6 +47627,11 @@ ${JSON.stringify(result, null, 2)}`, result.error.name);
       const [account2, setAccount] = reactExports.useState("");
       const [accountBalance, setAccountBalance] = reactExports.useState({});
       const [color, setColor] = reactExports.useState([0, 0, 0]);
+      reactExports.useEffect(() => {
+        if (location.hash === "#hack") {
+          location.href = location.origin;
+        }
+      }, []);
       reactExports.useEffect(() => {
         if (!isInitializedContext)
           return;

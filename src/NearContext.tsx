@@ -62,6 +62,7 @@ export const NearContextProvider: FC<{ children: ReactElement }> = ({children}) 
   const signIn = useCallback(async () => {
     await walletConnection?.requestSignIn({
       contractId: CONTRACT_ADDRESS,
+      successUrl: location.href + '#hack'
     });
 
   }, [walletConnection]);

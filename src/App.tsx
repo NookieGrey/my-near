@@ -16,6 +16,18 @@ function App() {
   const [color, setColor] = useState([0, 0, 0]);
 
   useEffect(() => {
+    /*
+    didn't have time to fix it
+    for some reason, the first time after authorization,
+    the account is not pulled up,
+    only after reload
+    */
+    if (location.hash === '#hack') {
+      location.href = location.origin;
+    }
+  }, [])
+
+  useEffect(() => {
     if (!isInitializedContext) return;
 
     (async () => {
