@@ -20050,8 +20050,6 @@ ${JSON.stringify(result, null, 2)}`, result.error.name);
     constants.DEFAULT_FUNCTION_CALL_GAS = new bn_js_1.default("30000000000000");
     var hasRequiredAccount;
     function requireAccount() {
-      if (hasRequiredAccount)
-        return account;
       hasRequiredAccount = 1;
       var __awaiter2 = commonjsGlobal && commonjsGlobal.__awaiter || function(thisArg, _arguments, P2, generator) {
         function adopt(value) {
