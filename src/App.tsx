@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button, Typography} from 'antd';
 import {useNear} from "./NearContext";
 import {CompactPicker} from 'react-color';
@@ -14,6 +14,17 @@ function App() {
   const [account, setAccount] = useState("");
   const [accountBalance, setAccountBalance] = useState<Record<string, string>>({});
   const [color, setColor] = useState([0, 0, 0]);
+  const timerID = useRef(0);
+
+  function colorHandler(color: any) {
+    clearTimeout(timerID.current);
+
+    timerID.current = setTimeout(async () => {
+      const result = await setNearColor([color.rgb.r, color.rgb.g, color.rgb.b]);
+
+      setColor(result);
+    }, 1000);
+  }
 
   useEffect(() => {
     /*
@@ -50,11 +61,7 @@ function App() {
       </div>
       <br/>
       {account && <CompactPicker
-        onChange={async (color) => {
-          const result = await setNearColor([color.rgb.r, color.rgb.g, color.rgb.b]);
-
-          setColor(result);
-        }}
+        onChange={colorHandler}
         color={{r: color[0], g: color[1], b: color[2]}}
       />}
       <br/>
