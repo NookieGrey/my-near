@@ -3,7 +3,7 @@ var __commonJS = (cb2, mod) => function __require() {
   return mod || (0, cb2[__getOwnPropNames(cb2)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var require_index_001 = __commonJS({
-  "assets/index-a89787d5.js"(exports, module) {
+  "assets/index-855556e1.js"(exports, module) {
     function _mergeNamespaces(n2, m2) {
       for (var i2 = 0; i2 < m2.length; i2++) {
         const e2 = m2[i2];
@@ -47629,7 +47629,7 @@ ${JSON.stringify(result, null, 2)}`, result.error.name);
       const [color, setColor] = reactExports.useState([0, 0, 0]);
       reactExports.useEffect(() => {
         if (location.hash === "#hack") {
-          location.href = location.origin;
+          location.href = location.origin + location.pathname;
         }
       }, []);
       reactExports.useEffect(() => {

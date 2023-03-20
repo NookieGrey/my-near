@@ -23,7 +23,7 @@ function App() {
     only after reload
     */
     if (location.hash === '#hack') {
-      location.href = location.origin;
+      location.href = location.origin + location.pathname;
     }
   }, [])
 
