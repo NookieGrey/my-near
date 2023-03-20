@@ -1,50 +1,105 @@
 import {createContext, FC, ReactElement, useCallback, useContext, useMemo, useState} from "react";
-import {Wallet} from './near-wallet';
+import {Account, connect, Contract, keyStores, WalletConnection} from "near-api-js";
+
+const myKeyStore = new keyStores.BrowserLocalStorageKeyStore();
 
 const NearContext = createContext({
   isInitializedContext: false,
-  signUp: async () => "",
-  signIn: () => {
+  signUp: async () => ({
+    accountID: "",
+    accountBalance: {
+      total: "",
+      stateStaked: "",
+      staked: "",
+      available: "",
+    },
+    color: [0, 0, 0]
+  }),
+  signIn: async () => {
   },
   signOut: () => {
   },
+  setNearColor: async (rgb: [number, number, number]) => [0, 0, 0]
 });
 
 const CONTRACT_ADDRESS = "frontend-test-1.badconfig.testnet";
 
 export const NearContextProvider: FC<{ children: ReactElement }> = ({children}) => {
-  const [wallet, setWallet] = useState<Wallet>();
+  const [walletConnection, setWalletConnection] = useState<WalletConnection>();
+  const [account, setAccount] = useState<Account>();
 
   const signUp = useCallback(async () => {
-    // @ts-ignore
-    const wallet = new Wallet({createAccessKeyFor: CONTRACT_ADDRESS});
+    const connectionConfig = {
+      networkId: "testnet",
+      keyStore: myKeyStore, // first create a key store
+      nodeUrl: "https://rpc.testnet.near.org",
+      walletUrl: "https://wallet.testnet.near.org",
+      helperUrl: "https://helper.testnet.near.org",
+      explorerUrl: "https://explorer.testnet.near.org",
+    };
 
-    setWallet(wallet);
+    const nearConnection = await connect(connectionConfig);
 
-    const isSignIn = await wallet.startUp();
+    const walletConnection = new WalletConnection(nearConnection, null);
 
-    if (isSignIn) {
-      // @ts-ignore
-      return wallet.accountId;
+    setWalletConnection(walletConnection);
 
-    } else {
-      return "";
+    const accountID = walletConnection.getAccountId();
+
+    const account = await nearConnection.account(accountID);
+    setAccount(account);
+
+    const accountBalance = await account.getAccountBalance();
+    const color = await account.viewFunction(CONTRACT_ADDRESS, 'get');
+
+    return {
+      accountID,
+      accountBalance,
+      color,
     }
-  }, [wallet]);
+  }, []);
 
-  const signIn = useCallback(() => {
-    wallet?.signIn();
-  }, [wallet]);
+  const signIn = useCallback(async () => {
+    await walletConnection?.requestSignIn({
+      contractId: CONTRACT_ADDRESS,
+    });
+
+  }, [walletConnection]);
 
   const signOut = useCallback(() => {
-    wallet?.signOut();
-  }, [wallet]);
+    walletConnection?.signOut();
+  }, [walletConnection]);
+
+  const setNearColor = useCallback(async ([r, g, b]: [number, number, number]) => {
+    if (!account) return;
+
+    const contract = new Contract(
+      account,
+      CONTRACT_ADDRESS,
+      {
+        viewMethods: [],
+        changeMethods: ["set"],
+      }
+    );
+
+    // @ts-ignore
+    await contract.set(
+      {
+        r: r,
+        g: g,
+        b: b,
+      },
+    );
+
+    return await account.viewFunction(CONTRACT_ADDRESS, 'get');
+  }, [account]);
 
   const value = useMemo(() => ({
     isInitializedContext: true,
     signUp,
     signIn,
     signOut,
+    setNearColor,
   }), [signUp, signIn, signOut]);
 
   return (
